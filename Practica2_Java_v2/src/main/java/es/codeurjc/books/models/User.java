@@ -2,6 +2,7 @@ package es.codeurjc.books.models;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,4 +35,16 @@ public class User {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	private Collection<Comment> comments = Collections.emptyList();
 
+	//TODO: Implement functions
+	public String getPasswordHash(){
+		return null;
+	}
+
+	public List<String> getRoles() {
+		return null;
+	}
+
+	public String getName() {
+		return null;
+	}
 }
