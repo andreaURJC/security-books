@@ -3,7 +3,7 @@ INSERT INTO books (title, summary, author, publisher, publication_year) VALUES (
 INSERT INTO books (title, summary, author, publisher, publication_year) VALUES ("Book 2 title", "Book 2 summary","Book 2 author","Book 2 publisher",2012);
 
 -- saving users
-INSERT INTO users (email, nick, password) VALUES('user1@email.es', 'user1', 'pass');
+INSERT INTO users (email, nick, password) VALUES('user1@email.es', 'user1', '$2a$10$XURPShQNCsLjp1ESc2laoObo9QZDhxz73hJPaEv7/cBha4pk0AgP.');
 INSERT INTO users (email, nick, password) VALUES('user2@email.es', 'user2', 'pass');
 
 -- saving roles

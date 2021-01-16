@@ -78,18 +78,4 @@ public class UserServiceImpl implements UserService {
         this.userRepository.delete(user);
         return this.mapper.map(user, UserResponseDto.class);
     }
-
-    private UserDetails toUserDetails(User user) {
-        Set<Role> roles = user.getRoles();
-        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
-
-        return new org.springframework.security.core.userdetails.User(user.getNick(), user.getPassword(), authorities);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String nick) throws UsernameNotFoundException {
-        User user = this.userRepository.findByNick(nick).orElseThrow(UserNotFoundException::new);
-        return this.toUserDetails(user);
-    }
 }

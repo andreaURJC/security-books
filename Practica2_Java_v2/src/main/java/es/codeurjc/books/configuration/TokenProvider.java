@@ -27,7 +27,7 @@ public class TokenProvider {
 		return Jwts.builder()
 				.setSubject(authentication.getName())
 				.claim(AUTHORITIES_KEY, authorities)
-				.signWith(SignatureAlgorithm.HS256, SIGNING_KEY)
+				.signWith(SignatureAlgorithm.HS512, SIGNING_KEY)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
 				.setIssuer(ISSUER_TOKEN)
 				.setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY_SECONDS*1000))

@@ -8,7 +8,7 @@ import es.codeurjc.books.dtos.responses.UserResponseDto;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserService extends UserDetailsService {
+public interface UserService {
 
     Collection<UserResponseDto> findAll();
 

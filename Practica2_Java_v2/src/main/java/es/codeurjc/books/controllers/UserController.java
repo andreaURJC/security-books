@@ -127,6 +127,5 @@ public class UserController {
                                                               @PathVariable long userId) {
         return this.commentService.getComments(userId);
     }
-
 }
 
