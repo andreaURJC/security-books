@@ -48,4 +48,16 @@ public class BookServiceImpl implements BookService {
         return this.mapper.map(book, BookDetailsResponseDto.class);
     }
 
+    public BookDetailsResponseDto modify(long bookId, Book book) {
+        return this.bookRepository.findById(bookId).map(foundBook -> {
+            foundBook.setTitle(book.getTitle());
+            foundBook.setAuthor(book.getAuthor());
+            foundBook.setSummary(book.getSummary());
+            foundBook.setPublisher(book.getPublisher());
+            foundBook.setPublicationYear(book.getPublicationYear());
+            this.bookRepository.save(foundBook);
+            return this.mapper.map(book, BookDetailsResponseDto.class);
+        }).orElseThrow(BookNotFoundException::new);
+    }
+
 }

@@ -8,13 +8,7 @@ import es.codeurjc.books.models.Book;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import es.codeurjc.books.dtos.requests.BookRequestDto;
 import es.codeurjc.books.dtos.requests.CommentRequestDto;
@@ -53,8 +47,7 @@ public class BookController {
         return this.bookService.findAll();
     }
 
-    @PreAuthorize("hasRole('USER') OR hasRole('ADMIN')")
-
+//    @PreAuthorize("hasRole('USER') OR hasRole('ADMIN')")
     @Operation(summary = "Get a book by its id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found the book",
@@ -133,6 +126,22 @@ public class BookController {
     @DeleteMapping("/{bookId}")
     public BookDetailsResponseDto deleteBook(@PathVariable Long bookId) {
      return this.bookService.remove(bookId);
+    }
+
+//    @PreAuthorize("hasRole('USER') OR hasRole('ADMIN')")
+    @Operation(summary = "Update book's details")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Modified book's details",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BookDetailsResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid format id supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Book not found",
+                    content = @Content)})
+    @PutMapping("/{bookId}")
+    public BookDetailsResponseDto update(@Parameter(description = "Id of book to be searched")
+                                          @PathVariable long bookId, @RequestBody Book book) {
+        return this.bookService.modify(bookId, book);
     }
 
 }

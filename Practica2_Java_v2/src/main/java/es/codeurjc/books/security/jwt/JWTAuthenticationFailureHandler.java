@@ -1,4 +1,4 @@
-package es.codeurjc.books.configuration.jwt;
+package es.codeurjc.books.security.jwt;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;

@@ -1,11 +1,10 @@
-package es.codeurjc.books.configuration;
+package es.codeurjc.books.security;
 
-import es.codeurjc.books.configuration.jwt.JWTAuthenticationFilter;
-import es.codeurjc.books.configuration.jwt.JWTAuthorizationFilter;
+import es.codeurjc.books.security.jwt.JWTAuthenticationFilter;
+import es.codeurjc.books.security.jwt.JWTAuthorizationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,9 +15,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static es.codeurjc.books.security.Constants.ALL_BOOKS_URL;
+import static es.codeurjc.books.security.Constants.LOGIN_URL;
+
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
@@ -49,8 +50,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers(HttpMethod.POST, "/login").permitAll()
-                    .antMatchers(HttpMethod.GET, "/api/v1/books/").permitAll()
+                    .antMatchers(HttpMethod.POST, LOGIN_URL).permitAll()
+                    .antMatchers(HttpMethod.GET, ALL_BOOKS_URL).permitAll()
                 .anyRequest().authenticated().and()
                 .addFilterBefore(new JWTAuthenticationFilter(authenticationManager()),
                         UsernamePasswordAuthenticationFilter.class)

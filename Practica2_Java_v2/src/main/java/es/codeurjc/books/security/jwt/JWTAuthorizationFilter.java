@@ -1,8 +1,7 @@
-package es.codeurjc.books.configuration.jwt;
+package es.codeurjc.books.security.jwt;
 
-import es.codeurjc.books.configuration.Constants;
-import es.codeurjc.books.configuration.TokenProvider;
-import es.codeurjc.books.services.UserService;
+import es.codeurjc.books.security.Constants;
+import es.codeurjc.books.security.TokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
