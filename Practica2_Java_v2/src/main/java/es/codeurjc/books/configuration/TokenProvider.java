@@ -43,6 +43,8 @@ public class TokenProvider {
 
 		final Claims claims = claimsJws.getBody();
 
+		String authString = claims.get(AUTHORITIES_KEY).toString();
+
 		final Collection<SimpleGrantedAuthority> authorities =
 				Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
 						.map(SimpleGrantedAuthority::new)
