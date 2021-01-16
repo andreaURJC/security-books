@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.validation.Valid;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,8 +32,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-    private UserService userService;
-    private CommentService commentService;
+    private final UserService userService;
+    private final CommentService commentService;
 
     public UserController(UserService userService, CommentService commentService) {
         this.userService = userService;
@@ -128,3 +129,4 @@ public class UserController {
     }
 
 }
+

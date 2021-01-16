@@ -3,15 +3,9 @@ package es.codeurjc.books.models;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Data;
 import lombok.ToString;
@@ -32,19 +26,16 @@ public class User {
 	@Column(nullable = false)
 	private String email;
 
+	@Column(nullable = false)
+	private String password;
+
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
 	private Collection<Comment> comments = Collections.emptyList();
 
-	//TODO: Implement functions
-	public String getPasswordHash(){
-		return null;
-	}
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "user_roles", joinColumns = {
+			@JoinColumn(name = "user_id") }, inverseJoinColumns = {
+			@JoinColumn(name = "role_id") })
+	private Set<Role> roles;
 
-	public List<String> getRoles() {
-		return null;
-	}
-
-	public String getName() {
-		return null;
-	}
 }

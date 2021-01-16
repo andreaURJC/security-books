@@ -3,9 +3,17 @@ package es.codeurjc.books.services.impl;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import es.codeurjc.books.models.Role;
 import org.dozer.Mapper;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import es.codeurjc.books.dtos.requests.UpdateUserEmailRequestDto;
@@ -21,12 +29,15 @@ import es.codeurjc.books.services.UserService;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private Mapper mapper;
-    private UserRepository userRepository;
+    private final Mapper mapper;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserServiceImpl(Mapper mapper, UserRepository userRepository) {
+
+    public UserServiceImpl(Mapper mapper, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.mapper = mapper;
         this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     public Collection<UserResponseDto> findAll() {
@@ -40,6 +51,7 @@ public class UserServiceImpl implements UserService {
             throw new UserWithSameNickException();
         }
         User user = this.mapper.map(userRequestDto, User.class);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user = this.userRepository.save(user);
         return this.mapper.map(user, UserResponseDto.class);
     }
@@ -67,4 +79,17 @@ public class UserServiceImpl implements UserService {
         return this.mapper.map(user, UserResponseDto.class);
     }
 
+    private UserDetails toUserDetails(User user) {
+        Set<Role> roles = user.getRoles();
+        Set<SimpleGrantedAuthority> authorities = new HashSet<>();
+        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
+
+        return new org.springframework.security.core.userdetails.User(user.getNick(), user.getPassword(), authorities);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String nick) throws UsernameNotFoundException {
+        User user = this.userRepository.findByNick(nick).orElseThrow(UserNotFoundException::new);
+        return this.toUserDetails(user);
+    }
 }
