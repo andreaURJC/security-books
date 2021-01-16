@@ -14,4 +14,5 @@ public interface BookService {
 
     BookDetailsResponseDto findById(long bookId);
 
+    BookDetailsResponseDto remove(long bookId);
 }

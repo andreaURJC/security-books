@@ -42,4 +42,10 @@ public class BookServiceImpl implements BookService {
         return this.mapper.map(book, BookDetailsResponseDto.class);
     }
 
+    public BookDetailsResponseDto remove(long bookId) {
+        Book book = this.bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
+        this.bookRepository.delete(book);
+        return this.mapper.map(book, BookDetailsResponseDto.class);
+    }
+
 }

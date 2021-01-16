@@ -4,6 +4,9 @@ import java.util.Collection;
 
 import javax.validation.Valid;
 
+import es.codeurjc.books.models.Book;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -116,6 +119,20 @@ public class BookController {
                                             @Parameter(description = "id of comment to be deleted")
                                             @PathVariable long commentId) {
         return this.commentService.deleteComment(bookId, commentId);
+    }
+
+    @Operation(summary = "Delete a book")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Delete the book",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BookDetailsResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid format id supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Book not found",
+                    content = @Content)})
+    @DeleteMapping("/{bookId}")
+    public BookDetailsResponseDto deleteBook(@PathVariable Long bookId) {
+     return this.bookService.remove(bookId);
     }
 
 }
