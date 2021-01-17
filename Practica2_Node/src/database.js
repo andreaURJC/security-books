@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const url = "mongodb://localhost:27017/booksDB";
 const User = require('./models/user.js').User;
 const Book = require('./models/book.js').Book;
+const Role = require('./models/role').Role;
 
 
 async function connect() {
@@ -26,21 +27,46 @@ async function init() {
 
     console.log('Initializing database');
 
+    console.log('Populating database with roles');
+
+    await Role.deleteMany({});
+
+    const adminRole = await new Role({
+        _id: new mongoose.Types.ObjectId("60042695f045e6f5a218009a"),
+        name: "ADMIN"
+    }).save();
+
+    const userRole = await new Role({
+        _id: new mongoose.Types.ObjectId("600426b9f045e6f5a21800b0"),
+        name: "USER"
+    }).save();
+
     console.log('Populating database with users');
 
     await User.deleteMany({});
 
-    await new User({
+    const user1 = await new User({
         _id: new mongoose.Types.ObjectId("5fda3234e9e3fd53e3907bed"),
         nick: "user1",
+        password: "$2a$10$XURPShQNCsLjp1ESc2laoObo9QZDhxz73hJPaEv7/cBha4pk0AgP.",
         email: "user1@email.es"
     }).save();
 
-    await new User({
+    user1.roles.push(adminRole._id);
+    user1.roles.push(userRole._id);
+
+    await user1.save();
+
+    const user2 = await new User({
         _id: new mongoose.Types.ObjectId("5fda3234e9e3fd53e3907bef"),
         nick: "user2",
+        password: "$2a$10$XURPShQNCsLjp1ESc2laoObo9QZDhxz73hJPaEv7/cBha4pk0AgP.",
         email: "user2@email.es"
     }).save();
+
+    user2.roles.push(userRole._id);
+
+    await user2.save();
 
     console.log('Populating database with books');
 

@@ -12,6 +12,10 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Nick is mandatory'],
         unique: true
     },
+    password: {
+        type: String,
+        required: [true, 'Password is mandatory']
+    },
     email: {
         type: String,
         validate: {
@@ -19,7 +23,11 @@ const userSchema = new mongoose.Schema({
             message: props => `${props.value} is not a valid email`
         },
         required: [true, 'Email is mandatory']
-    }
+    },
+    roles: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Role'
+    }]
 });
 
 const User = mongoose.model('User', userSchema);
