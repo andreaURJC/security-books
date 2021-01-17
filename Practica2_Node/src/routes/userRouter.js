@@ -3,6 +3,7 @@ const router = express.Router();
 const { User, toResponse, isValidEmail } = require('../models/user.js');
 const Book = require('../models/book.js').Book;
 const mongoose = require('mongoose');
+const verifyToken = require('../verifyToken.js')
 
 // TODO: Refactor move to Security package
 const config = require('../config')
@@ -12,12 +13,12 @@ const bcrypt = require('bcryptjs');
 const INVALID_USER_ID_RESPONSE = { "error": "Invalid user id" };
 const USER_NOT_FOUND_RESPONSE = { "error": "User not found" };
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     const allUsers = await User.find().exec();
     res.json(toResponse(allUsers));
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', verifyToken, async (req, res) => {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -33,7 +34,7 @@ router.get('/:id', async (req, res) => {
 
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
 
     const result = await User.find({ nick: req.body.nick }).exec();
     if (result.length > 0) {
@@ -56,7 +57,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', verifyToken,async (req, res) => {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -78,7 +79,7 @@ router.patch('/:id', async (req, res) => {
 
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', verifyToken,async (req, res) => {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -100,7 +101,7 @@ router.delete('/:id', async (req, res) => {
     res.json(toResponse(user));
 });
 
-router.get('/:id/comments', async (req, res) => {
+router.get('/:id/comments', verifyToken, async (req, res) => {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {

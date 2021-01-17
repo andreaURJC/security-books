@@ -1,19 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const { Book, toResponse: toResponseBook } = require('../models/book.js');
+const {Book, toResponse: toResponseBook} = require('../models/book.js');
 const User = require('../models/user.js').User;
 const toResponseComment = require('../models/comment.js').toResponse;
 const mongoose = require('mongoose');
+const verifyToken = require('../verifyToken.js')
 
-const INVALID_BOOK_ID_RESPONSE = { "error": "Invalid book id" };
-const BOOK_NOT_FOUND_RESPONSE = { "error": "Book not found" }
+const INVALID_BOOK_ID_RESPONSE = {"error": "Invalid book id"};
+const BOOK_NOT_FOUND_RESPONSE = {"error": "Book not found"}
 
 router.get('/', async (req, res) => {
     const allBooks = await Book.find().exec();
     res.json(toResponseBook(allBooks));
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', verifyToken, async (req, res) => {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -22,7 +23,7 @@ router.get('/:id', async (req, res) => {
 
     //If nick and name is placed in the comment, there is no need to populate.
     const book = await Book.findById(id).populate('comments.user');
-    
+
     if (!book) {
         return res.status(404).send(BOOK_NOT_FOUND_RESPONSE);
     }
@@ -30,7 +31,7 @@ router.get('/:id', async (req, res) => {
     res.json(toResponseBook(book));
 });
 
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
 
     const book = new Book({
         title: req.body.title,
@@ -50,14 +51,14 @@ router.post('/', async (req, res) => {
 });
 
 
-router.post('/:id/comments', async (req, res) => {
+router.post('/:id/comments', verifyToken, async (req, res) => {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).send(INVALID_BOOK_ID_RESPONSE);
     }
     if (!req.body.userNick) {
-        return res.status(400).send({ "error": "User nick is mandatory" });
+        return res.status(400).send({"error": "User nick is mandatory"});
     }
 
     const book = await Book.findById(id);
@@ -65,10 +66,11 @@ router.post('/:id/comments', async (req, res) => {
         return res.status(404).send(BOOK_NOT_FOUND_RESPONSE);
     }
 
-    const user = await User.findOne({ nick: req.body.userNick })
+    const user = await User.findOne({nick: req.body.userNick})
     if (!user) {
-        return res.status(404).json({ "error": "User not found" });
-    };
+        return res.status(404).json({"error": "User not found"});
+    }
+    ;
 
     book.comments.push({
         comment: req.body.comment,
@@ -90,7 +92,7 @@ router.post('/:id/comments', async (req, res) => {
 });
 
 
-router.delete('/:id/comments/:commentId', async (req, res) => {
+router.delete('/:id/comments/:commentId', verifyToken, async (req, res) => {
     const id = req.params.id;
     const commentId = req.params.commentId;
 
@@ -98,7 +100,7 @@ router.delete('/:id/comments/:commentId', async (req, res) => {
         return res.status(400).send(INVALID_BOOK_ID_RESPONSE);
     }
     if (!mongoose.Types.ObjectId.isValid(commentId)) {
-        return res.status(400).send({ "error": "Invalid comment id" });
+        return res.status(400).send({"error": "Invalid comment id"});
     }
 
     const book = await Book.findById(id).populate('comments.user');
@@ -108,7 +110,7 @@ router.delete('/:id/comments/:commentId', async (req, res) => {
 
     const comment = await book.comments.id(commentId);
     if (!comment) {
-        return res.status(404).send({ "error": "Comment not found" });
+        return res.status(404).send({"error": "Comment not found"});
     }
 
     comment.remove();
