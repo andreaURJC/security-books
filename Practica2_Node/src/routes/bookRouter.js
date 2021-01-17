@@ -4,7 +4,7 @@ const {Book, toResponse: toResponseBook} = require('../models/book.js');
 const User = require('../models/user.js').User;
 const toResponseComment = require('../models/comment.js').toResponse;
 const mongoose = require('mongoose');
-const verifyToken = require('../verifyToken.js')
+const {verifyToken, isAdmin} = require('../authJWT.js');
 
 const INVALID_BOOK_ID_RESPONSE = {"error": "Invalid book id"};
 const BOOK_NOT_FOUND_RESPONSE = {"error": "Book not found"}
@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     res.json(toResponseBook(allBooks));
 });
 
-router.get('/:id', verifyToken, async (req, res) => {
+router.get('/:id', [verifyToken, isAdmin], async (req, res) => {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {

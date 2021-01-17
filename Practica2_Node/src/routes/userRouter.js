@@ -3,7 +3,7 @@ const router = express.Router();
 const { User, toResponse, isValidEmail } = require('../models/user.js');
 const Book = require('../models/book.js').Book;
 const mongoose = require('mongoose');
-const verifyToken = require('../verifyToken.js')
+const {verifyToken} = require('../authJWT.js')
 
 // TODO: Refactor move to Security package
 const config = require('../config')
