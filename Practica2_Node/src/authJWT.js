@@ -14,7 +14,7 @@ const verifyToken = async (req, res, next) => {
         token = token.replace("Bearer ", "");
         console.log(token);
         let decoded = await jwt.verify(token, config.SECRET);
-        req.userId = decoded.id;
+        req.nick = decoded.id;
         next();
     } catch (e) {
         return res.status(500).send({auth: false, message: 'Failed to authenticatetoken.'});
@@ -22,12 +22,11 @@ const verifyToken = async (req, res, next) => {
 }
 
 const isAdmin = async (req, res, next) => {
-    const userId = req.userId;
-    const user = await User.findById(userId);
+    const user = await User.findOne({nick:req.nick});
 
     const roles = await Role.find({_id: {$in: user.roles}});
 
-    for (role in roles) {
+    for (role of roles) {
         if (role.name === "ADMIN") {
             next();
             return;

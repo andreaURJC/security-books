@@ -14,7 +14,10 @@ router.get('/', async (req, res) => {
     res.json(toResponseBook(allBooks));
 });
 
-router.get('/:id', [verifyToken, isAdmin], async (req, res) => {
+// To authorize admin user:
+// router.get('/:id', [verifyToken, isAdmin], async (req, res) => {
+
+router.get('/:id', verifyToken, async (req, res) => {
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
