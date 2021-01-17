@@ -4,6 +4,11 @@ const { User, toResponse, isValidEmail } = require('../models/user.js');
 const Book = require('../models/book.js').Book;
 const mongoose = require('mongoose');
 
+// TODO: Refactor move to Security package
+const config = require('../config')
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
 const INVALID_USER_ID_RESPONSE = { "error": "Invalid user id" };
 const USER_NOT_FOUND_RESPONSE = { "error": "User not found" };
 
@@ -123,6 +128,32 @@ router.get('/:id/comments', async (req, res) => {
 
     res.json(userComments);
 
+});
+
+router.post('/login', async (req, res) => {
+    const { nick, password } = req.body;
+    
+    try {
+        const user = await User.findOne({ "nick": nick }).populate("roles");
+        console.log(user)
+        if (!user) {
+            return res.status(400).send("Nick/Password combination is incorrect")
+        }
+
+        let isPasswordCorrect = bcrypt.compareSync(password, user.password);
+        if (!isPasswordCorrect) {
+            return res.status(400).send("Nick/Password combination is incorrect")
+        }
+
+        let token = jwt.sign({ id: user.nick }, config.SECRET, {
+            expiresIn: 86400 // expires in 24 hours
+        });
+        token = "Bearer " + token;
+
+        res.send({ token })
+    } catch (e) {
+        res.status(500).send(e);
+    }
 });
 
 module.exports = router;
