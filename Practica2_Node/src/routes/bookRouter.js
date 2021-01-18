@@ -53,6 +53,23 @@ router.post('/', verifyToken, async (req, res) => {
 
 });
 
+router.delete('/:id', verifyToken, async (req, res) => {
+    const id = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).send(INVALID_BOOK_ID_RESPONSE);
+    }
+
+    const book = await Book.findById(id).populate('comments.user');
+    if (!book) {
+        return res.status(404).send(BOOK_NOT_FOUND_RESPONSE);
+    }
+
+    await book.remove();
+    res.json(book);
+
+});
+
 
 router.post('/:id/comments', verifyToken, async (req, res) => {
     const id = req.params.id;
